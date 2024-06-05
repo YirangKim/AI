@@ -33,7 +33,7 @@ app = FastAPI()
 # localhost주소/docs
 
 @app.get("/users")
-def get_users(limit:int = 100): #기본값 지정
+def get_users(limit:int = 200): #기본값 지정
     return {"limit":limit}
 
 # 포트번호 지정
