@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <form action="/add" method="post">
+        <textarea name="task" rows="5" placeholder="할 일을 등록 해주세요"></textarea>
+        <button type="submit">Add</button>
+    </form>
+
+    <br>
+    <h2>오늘 할 일</h2>
+
+    <div>
+        {% for todo in todos %}
+            <div class="task">
+                {% if todo.completed %}
+                    <s>{{ todo.task }}</s>  <!--완료 체크시 줄긋기-->
+                {% else %}
+                    {{ todo.task }}
+                {% endif %}
+                <small>
+                    <a href="edit/{{ todo.id }}">수정</a>
+                    <a href="delete/{{ todo.id }}">삭제</a>
+                </small>
+            </div>
+        {% endfor %}
+    </div>
+
+{% endblock content %}
