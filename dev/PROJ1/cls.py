@@ -37,15 +37,17 @@ from mediapipe.tasks.python import vision
 base_options = python.BaseOptions(model_asset_path='models\\efficientnet_lite0.tflite') # 1) 경로수정
 options = vision.ImageClassifierOptions(
     base_options=base_options, max_results=1) # 2) 결과값1 
-classifier = vision.ImageClassifier.create_from_options(options)
+classifier = vision.ImageClassifier.create_from_options(options) #classifier 추론기
 
-# STEP 3: 데이터 가져오기 Load the input image. 
+# STEP 3: 추론 할 데이터 가져오기 Load the input image. 
 image = mp.Image.create_from_file(IMAGE_FILENAMES[1])
 
 # STEP 4: 추론 Classify the input image. 
 classification_result = classifier.classify(image)
+print("")
+print(classification_result)
 
-# STEP 5: 후처리 출력  Process the classification result. In this case, visualize it. 
+# STEP 5: 후 처리 출력  Process the classification result. In this case, visualize it. 
 top_category = classification_result.classifications[0].categories[0]
 result = (f"{top_category.category_name} - ({top_category.score:.2f})") #스트링 포맷
 
