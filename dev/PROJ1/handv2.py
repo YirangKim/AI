@@ -1,43 +1,106 @@
-# 캠 연결하기
+from mediapipe import solutions
+from mediapipe.framework.formats import landmark_pb2
+import numpy as np
+
+MARGIN = 10  # pixels
+FONT_SIZE = 1
+FONT_THICKNESS = 1
+HANDEDNESS_TEXT_COLOR = (88, 205, 54) # vibrant green
+
+def draw_landmarks_on_image(rgb_image, detection_result):
+  hand_landmarks_list = detection_result.hand_landmarks
+  handedness_list = detection_result.handedness
+  annotated_image = np.copy(rgb_image)
+
+  # Loop through the detected hands to visualize.
+  for idx in range(len(hand_landmarks_list)):
+    hand_landmarks = hand_landmarks_list[idx]
+    handedness = handedness_list[idx]
+
+    # Draw the hand landmarks.
+    hand_landmarks_proto = landmark_pb2.NormalizedLandmarkList()
+    hand_landmarks_proto.landmark.extend([
+      landmark_pb2.NormalizedLandmark(x=landmark.x, y=landmark.y, z=landmark.z) for landmark in hand_landmarks
+    ])
+    solutions.drawing_utils.draw_landmarks(
+      annotated_image,
+      hand_landmarks_proto,
+      solutions.hands.HAND_CONNECTIONS,
+      solutions.drawing_styles.get_default_hand_landmarks_style(),
+      solutions.drawing_styles.get_default_hand_connections_style())
+
+    # Get the top left corner of the detected hand's bounding box.
+    height, width, _ = annotated_image.shape
+    x_coordinates = [landmark.x for landmark in hand_landmarks]
+    y_coordinates = [landmark.y for landmark in hand_landmarks]
+    text_x = int(min(x_coordinates) * width)
+    text_y = int(min(y_coordinates) * height) - MARGIN
+
+    # Draw handedness (left or right hand) on the image.
+    cv2.putText(annotated_image, f"{handedness[0].category_name}",
+                (text_x, text_y), cv2.FONT_HERSHEY_DUPLEX,
+                FONT_SIZE, HANDEDNESS_TEXT_COLOR, FONT_THICKNESS, cv2.LINE_AA)
+
+  return annotated_image
+
+IMAGE_FILE = 'woman_hands.jpg'
+
 import cv2
+
+# cv2.imshow(IMAGE_FILE)
+# cv2.waitKey(0)
+
+# STEP 1: Import the necessary modules.
 import mediapipe as mp
+from mediapipe.tasks import python
+from mediapipe.tasks.python import vision
 
-# mediapipe 사용하기
-# 손 찾기 관련 기능 불러오기
-mp_hands = mp.solutions.hands
-# 손 그려주는 기능 불러오기
-mp_drawing = mp.solutions.drawing_utils
-# 손 찾기 관련 세부 설정
-hands = mp_hands.Hands(
-    max_num_hands = 1, # 탐지할 최대 손의 갯수
-    min_detection_confidence = 0.5, # 표시할 손의 최소 정확도
-    min_tracking_confidence = 0.5 # 표시할 관절의 최소 정확도
-)
+# STEP 2: Create an HandLandmarker object.
+base_options = python.BaseOptions(model_asset_path='models\\hand_landmarker.task')
+options = vision.HandLandmarkerOptions(base_options=base_options,
+                                       num_hands=2)
+detector = vision.HandLandmarker.create_from_options(options)
 
-video = cv2.VideoCapture(0)
+# # STEP 3: Load the input image.
+# image = mp.Image.create_from_file(IMAGE_FILE)
 
-while video.isOpened() :
-    ret, img = video.read()
-    img = cv2.flip(img,1)
-    # 파이썬이 인식 잘 하도록 BGR → RGB로 변경
-    img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+# # STEP 4: Detect hand landmarks from the input image.
+# detection_result = detector.detect(image)
+# print("")
+# print(detection_result)
 
-    # 손 탐지하기
-    result = hands.process(img)
+# # STEP 5: Process the classification result. In this case, visualize it.
+# annotated_image = draw_landmarks_on_image(image.numpy_view(), detection_result)
+# # cv2_imshow(cv2.cvtColor(annotated_image, cv2.COLOR_RGB2BGR))
+# cv2.imshow("test", annotated_image)
+# cv2.waitKey(0)
 
-    img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
-    
-    if not ret :
+# Real-time video stream processing function
+# New STEP 4: Detect hand landmarks from the input image.
+def process_frame(image, detector, timestamp):
+    mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=image)
+    detector.detect_async(mp_image, timestamp)
+
+# New STEP 5: Using webcam for real-time hand detection
+cap = cv2.VideoCapture(0)  # Using the webcam
+if not cap.isOpened():
+    print("Cannot open webcam.")
+    exit()
+
+while cap.isOpened():
+    ret, frame = cap.read()
+    if not ret:
         break
 
-    # 찾은 손 표시하기
-    if result.multi_hand_landmarks is not None :
-        print(result.multi_hand_landmarks)
+    # frame_timestamp_ms = int(cap.get(cv2.CAP_PROP_POS_MSEC))
+    # process_frame(frame, detector, frame_timestamp_ms)
 
-    k = cv2.waitKey(30)
-    if k == 49 :
+    detection_result = detector.detect(mp.Image(image_format=mp.ImageFormat.SRGB, data=frame))
+    annotated_image = draw_landmarks_on_image(frame, detection_result)
+    cv2.imshow('Hand Detection Live', annotated_image)
+
+    if cv2.waitKey(1) & 0xFF == ord('q'):
         break
-    cv2.imshow('hand', img)
 
-video.release()
+cap.release()
 cv2.destroyAllWindows()
