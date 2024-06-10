@@ -25,8 +25,6 @@ DESIRED_WIDTH = 480
 #   resize_and_show(image)
 
 
-
-
 # STEP 1: 모듈 가져오기 Import the necessary modules.
 import mediapipe as mp
 from mediapipe.tasks import python
