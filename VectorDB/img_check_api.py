@@ -23,7 +23,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# 루트 경로에 대한 엔드포인트 추가
+@app.get("/")
+async def read_root():
+    return {"message": "Welcome to the image comparison API"}
+
 # 이미지 임베딩을 위한 모델 로드
+# torchvision.models 모듈에서 제공하는 resnet50 모델
+# resnet50 이미지 임베딩을 생성하고, 두 이미지의 유사도를 계산
 model = resnet50(pretrained=True)
 model = torch.nn.Sequential(*(list(model.children())[:-1]))
 model.eval()
@@ -61,16 +68,16 @@ async def compare_images(file1: UploadFile = File(...), file2: UploadFile = File
     cosine_similarity = np.dot(embedding1, embedding2) / (norm(embedding1) * norm(embedding2))
 
     # 결과 응답
-    similarity_result = "The images are similar." if cosine_similarity >= 0.5 else "The images are not similar."
+    similarity_result = "유사한 이미지 입니다." if cosine_similarity >= 0.5 else "일치하지 않음."
     response = {
         "cosine_similarity": float(cosine_similarity),
         "similarity_result": similarity_result,
-        "embedding1": embedding1.astype(float).tolist(),
-        "embedding2": embedding2.astype(float).tolist()
+        # "embedding1": embedding1.astype(float).tolist(),
+        # "embedding2": embedding2.astype(float).tolist()
     }
 
     return JSONResponse(content=response)
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("img_check_api:app", host="0.0.0.0", port=8001, reload=True)
+    uvicorn.run("img_check_api:app", host="0.0.0.0", port=8000, reload=True)
