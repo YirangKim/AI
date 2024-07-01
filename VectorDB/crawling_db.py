@@ -20,7 +20,7 @@ def load_csv(file_path):
     return docs
 
 # 데이터 CSV 파일에서 데이터 읽기
-docs = load_csv("./crawling2024.csv")
+docs = load_csv("/mnt/data/cases2024.csv")
 
 # 데이터 준비
 # 인덱스 리스트
@@ -44,6 +44,9 @@ for idx, doc in enumerate(docs):
     # 각 리스트에 데이터 추가
     ids.append(id)
     documents.append(embedding)
+
+    # 고유한 ID와 문서 내용 출력
+    print(f"ID: {id}\nContent: {document}\n")
 
 # ChromaDB 클라이언트 초기화
 client = chromadb.PersistentClient(path="../data")
@@ -73,4 +76,5 @@ results = collection.query(
 )
 
 # 쿼리 결과 출력
+print("DB에 저장되었습니다.")
 print(results)
