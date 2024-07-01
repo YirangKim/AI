@@ -6,7 +6,7 @@ from collections import namedtuple
 from fastapi import FastAPI, UploadFile, File
 import shutil
 
-# 경고 메시지 무시
+# 경고 메시지 무시시
 warnings.filterwarnings("ignore", category=FutureWarning)
 
 # FastAPI 인스턴스 생성
