@@ -1,3 +1,7 @@
+# dataset2024.py에서 cases2024.csv를 만들고
+# crawling2024.py에선 판례상세링크에 대한 정보를 열에 추가한다
+# crawling2024.csv 2024년 판례 생성
+
 import pandas as pd
 import xml.etree.ElementTree as ET
 from urllib.request import urlopen
@@ -5,7 +9,7 @@ from tqdm import trange
 import re
 
 # CSV 파일을 불러옵니다.
-case_list = pd.read_csv('./cases2024.csv')
+case_list = pd.read_csv('./source/cases2024.csv')
 contents = ['판시사항', '판결요지', '참조조문', '참조판례', '판례내용']
 
 def remove_tag(content):

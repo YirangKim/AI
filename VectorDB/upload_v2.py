@@ -7,6 +7,7 @@ import chromadb
 from fastapi import APIRouter, UploadFile, File
 import shutil
 import logging
+import os
 
 # 경고 메시지 무시
 warnings.filterwarnings("ignore", category=FutureWarning)
@@ -17,6 +18,15 @@ logger = logging.getLogger(__name__)
 
 # 임베딩 모델 로드 (SentenceTransformer 사용)
 model = SentenceTransformer('paraphrase-MiniLM-L6-v2')
+
+# 기존 데이터 삭제
+def clear_chroma_data():
+    data_path = "./data"
+    if os.path.exists(data_path):
+        shutil.rmtree(data_path)
+        logger.info("기존 Chroma 데이터 삭제 완료")
+
+clear_chroma_data()  # 데이터 초기화
 
 # ChromaDB 클라이언트 초기화
 client = chromadb.PersistentClient(path="./data")
@@ -93,7 +103,7 @@ async def upload_csv(file: UploadFile = File(...)):
         embeddings = model.encode(texts, convert_to_tensor=False)
         if embeddings is None or len(embeddings) == 0:
             raise ValueError("임베딩 생성 실패")
-        logger.info("임베딩 모델 함수 호출 완료, 생성된 임베딩 수:", len(embeddings))
+        logger.info(f"임베딩 모델 함수 호출 완료, 생성된 임베딩 수: {len(embeddings)}")
     except Exception as e:
         logger.error(f"임베딩 모델 함수 호출 실패: {e}")
         return {"message": "임베딩 생성 실패"}

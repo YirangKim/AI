@@ -1,3 +1,5 @@
+# 판례 상세링크를 제외한 2024 판례 내용을 cases2024.csv에 저장한다
+
 import pandas as pd
 import xml.etree.ElementTree as ET
 from urllib.request import urlopen
