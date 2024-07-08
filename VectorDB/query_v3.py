@@ -107,16 +107,16 @@ async def query_chromadb(query_text: str = Query(..., description="Query text to
     # 두 번째 답변: 법원명, 사건번호, 판결요지
     metadata_response = format_metadata_response(metadata_list)
 
-    # 가장 유사한 판례의 메타데이터 추출
-    most_similar_metadata = metadata_list[0] if metadata_list else None
-    if most_similar_metadata:
-        most_similar_info = {
-            "법원명": most_similar_metadata.get("법원명", "없음"),
-            "사건번호": most_similar_metadata.get("사건번호", "없음"),
-            "판결요지": most_similar_metadata.get("판결요지", "없음")
+    # 가장 유사한 판례의 메타데이터 추출 (최대 2개)
+    most_similar_metadata = metadata_list[:2] if metadata_list else []
+    most_similar_info = [
+        {
+            "법원명": metadata.get("법원명", "없음"),
+            "사건번호": metadata.get("사건번호", "없음"),
+            "판결요지": metadata.get("판결요지", "없음")
         }
-    else:
-        most_similar_info = {"법원명": "없음", "사건번호": "없음", "판결요지": "없음"}
+        for metadata in most_similar_metadata
+    ]
 
     return {
         "query": query_text,

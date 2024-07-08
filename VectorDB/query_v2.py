@@ -52,7 +52,7 @@ def truncate_text(text, max_tokens):
 router = APIRouter()
 
 @router.get("/query-v2/")
-async def query_chromadb(query_text: str = Query(..., description="Query text to search similar documents"), num_results: int = Query(10, description="Number of similar documents to retrieve"), collection = Depends(get_chroma_client)):
+async def query_chromadb(query_text: str = Query(..., description="Query text to search similar documents"), num_results: int = Query(5, description="Number of similar documents to retrieve"), collection = Depends(get_chroma_client)):
     try:
         search_results = search_similar_documents(query_text, collection, ko_embedding, num_results=num_results)
     except Exception as e:
