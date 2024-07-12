@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 # from upload import upload_router
 from upload_v2 import upload_router_v2
+from upload_v3 import upload_router_v3
 from upload_v4 import upload_router_v4
 #from upload_json import upload_json_router
 # from query import query_router
@@ -13,7 +14,8 @@ app = FastAPI()
 
 #app.include_router(upload_router, prefix="/api") # VDB저장
 app.include_router(upload_router_v2, prefix="/api") # chunck VDB저장
-app.include_router(upload_router_v4, prefix="/api") # VDB저장
+app.include_router(upload_router_v4, prefix="/api") 
+app.include_router(upload_router_v3, prefix="/api") # VDB저장
 #app.include_router(query_router, prefix="/api") # RAG
 app.include_router(query_router_v2, prefix="/api") # RAG
 app.include_router(query_router_v3, prefix="/api") # RAG
