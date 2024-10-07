@@ -54,7 +54,7 @@ def capture_face_from_webcam(output_path_template="webcam_capture{}.jpg"):
     cap.release()
     # cv2.destroyAllWindows()는 GUI 창을 사용하는 경우에만 필요하므로 제거
 
-# 종료 신호를 받기 위한 함수
+# 종료 신호를 받기 위한 함수..
 def set_exit_flag(value: bool):
     global exit_flag
     exit_flag = value
