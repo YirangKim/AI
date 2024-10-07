@@ -14,7 +14,7 @@ os.environ["OPENCV_AVFOUNDATION_SKIP_AUTH"] = "1"
 app = FaceAnalysis(providers=['CPUExecutionProvider'])
 app.prepare(ctx_id=0, det_size=(640, 640))  # 얼굴 분석기 준비
 
-# 전역 변수로 종료 플래그 추가
+# 전역 변수로 종료 플래그 추가 add
 exit_flag = False
 
 # Step 3 웹캠 연결 및 얼굴 검출 함수
@@ -54,7 +54,7 @@ def capture_face_from_webcam(output_path_template="webcam_capture{}.jpg"):
     cap.release()
     # cv2.destroyAllWindows()는 GUI 창을 사용하는 경우에만 필요하므로 제거
 
-# 종료 신호를 받기 위한 함수..
+# 종료 신호를 받기 위한 함수
 def set_exit_flag(value: bool):
     global exit_flag
     exit_flag = value
