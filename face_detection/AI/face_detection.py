@@ -1,4 +1,5 @@
 # face_detection.py
+# 웹캠 얼굴 캡처 기능 정의
 
 import os
 import cv2

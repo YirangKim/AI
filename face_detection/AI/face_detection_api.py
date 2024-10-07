@@ -1,8 +1,9 @@
 # face_detection_api.py
 
-from fastapi import FastAPI, BackgroundTasks
+from fastapi import FastAPI, BackgroundTasks, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from face_detection import capture_face_from_webcam, set_exit_flag
+from face_alignment import face_alignment
 
 # FastAPI 앱 생성
 app = FastAPI()
@@ -31,6 +32,21 @@ async def stop_capture():
     # 캡처 중지를 위한 종료 플래그 설정
     set_exit_flag(True)
     return {"message": "웹캠 얼굴 검출 중지"}
+
+# 얼굴 정렬 API 엔드포인트
+@app.post("/align-face/")
+async def align_face(file: UploadFile = File(...)):
+    # 업로드된 파일을 저장
+    image_path = f"uploaded_{file.filename}"
+    with open(image_path, "wb") as f:
+        f.write(file.file.read())
+
+    # 얼굴 정렬 실행
+    aligned_image_path = face_alignment(image_path)
+    if aligned_image_path is None:
+        return {"message": "얼굴을 찾을 수 없습니다."}
+
+    return {"message": "얼굴 정렬 완료", "aligned_image_path": aligned_image_path}
 
 # FastAPI 앱 실행
 if __name__ == "__main__":
