@@ -10,8 +10,10 @@
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
     "@fortawesome/vue-fontawesome": "^3.0.8",
+    "@tensorflow/tfjs": "^4.21.0",
     "core-js": "^3.8.3",
     "dayjs": "^1.11.13",
+    "face-api.js": "^0.22.2",
     "vue": "^3.5.11",
     "vue-class-component": "^8.0.0-0",
     "vue-router": "^4.0.3"

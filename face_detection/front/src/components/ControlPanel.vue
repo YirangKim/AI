@@ -7,32 +7,46 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
+import { computed } from 'vue'; // ref 대신 computed만 필요합니다
 
-// 컨트롤 패널 스타일 정의
+// ControlPanel 레이아웃 스타일 정의
 const controlPanelStyle = computed(() => ({
+  flex: '0 0 30%',  // HomeView에서 ControlPanel이 30% 차지
   display: 'flex',
   flexDirection: 'column',
-  gap: '1rem', // rem 단위로 유지
+  justifyContent: 'center',
+  alignItems: 'center',
+  padding: '1rem',
+  backgroundColor: '#f5f5f5',
+  gap: '1rem',
+  maxWidth: '100%',  // 부모 너비를 넘지 않도록 설정
+  maxHeight: '100%', // 부모 높이를 넘지 않도록 설정
+  overflow: 'hidden', // 내부 스크롤 방지
 }));
 
 // 버튼 스타일 정의
 const buttonStyle = computed(() => ({
-  padding: '10px 20px', // px 단위로 명확히 정의
-  fontSize: '16px', // 폰트 크기 명시
+  padding: '10px 20px',  // 패딩을 줄여 부모 크기를 넘지 않도록 설정
+  fontSize: '16px',
   cursor: 'pointer',
+  maxWidth: '100%',  // 버튼이 부모의 크기를 넘지 않도록 설정
+  maxHeight: '100%', // 버튼이 부모의 높이를 넘지 않도록 설정
 }));
 
-// 버튼 이벤트 핸들러 정의
-const registerUser = (): void => {
+// 버튼 클릭 이벤트 핸들러
+const registerUser = () => {
   alert('사용자가 등록되었습니다.');
 };
 
-const resetCamera = (): void => {
+const resetCamera = () => {
   alert('카메라가 초기화되었습니다.');
 };
 
-const captureImage = (): void => {
+const captureImage = () => {
   alert('이미지를 캡처했습니다.');
 };
 </script>
+
+<style scoped>
+/* 추가적인 스타일을 여기에 정의할 수 있습니다. */
+</style>
