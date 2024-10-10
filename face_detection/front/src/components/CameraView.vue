@@ -53,7 +53,11 @@ onMounted(async () => {
 const loadLabeledImages = async () => {
   const labels = ['김이랑', '김정희', '이진우']; // 배열은 인식할 사람들의 이름 목록
 
+  // map이 각 이름마다 비동기 작업(이미지 처리 작업)을 시작하면
+  // Promise.all은 이 작업들이 모두 끝날 때까지 기다렸다가, 그 결과를 한 번에 모아줌
   return Promise.all(
+    // labels.map 이름 목록인 labels 배열의 각 이름을 하나씩 처리하는 
+    // 각 이름에 대해 이미지를 불러오고, 얼굴 특징을 찾아내는 비동기 작업(이미지 처리 작업)을 진행
     labels.map(async (label) => {
       const imgUrl = `/known/${label}.jpg`; // 이미지 경로에서 이미지 불러오기
       const img = await faceapi.fetchImage(imgUrl); // 불러오는 이미지는 얼굴 인식 모델이 처리할 수 있도록 faceapi.fetchImage()를 사용해 가져옵
@@ -100,10 +104,14 @@ const startFaceDetection = () => {
       if (detections.length > 0) {
         const faceMatcher = new faceapi.FaceMatcher(labeledFaceDescriptors, 0.6); // 얼굴 매칭 0.6은 유사도 임계값
         detections.forEach((detection) => {
+          // 가장 유사한 얼굴 찾기
+          // findBestMatch 감지된 얼굴 벡터마다 저장된 얼굴 데이터 중 가장 유사한 얼굴 찾음
+          // detection.descriptor 웹캠에서 실시간 추출된 얼굴 벡터
           const bestMatch = faceMatcher.findBestMatch(detection.descriptor);// 가장 비슷 한 얼굴 찾기
 
-          // 얼굴이 인식되면 이름 표시
+          // 매칭 결과를 화면에 표시 - 얼굴이 인식되면 이름 표시
           if (bestMatch.label !== 'unknown') {
+            // 가장 유사한 얼굴이 있으면 그 사람 이름을 nameTag 표시
             nameTag.value!.innerText = `인식된 사람: ${bestMatch.label}`;
           } else {
             nameTag.value!.innerText = '알 수 없는 사람';
