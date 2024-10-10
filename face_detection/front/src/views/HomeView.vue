@@ -1,44 +1,39 @@
 <template>
   <div :style="homeStyle">
-    <CameraView />
-    <ControlPanel />
+    <!-- CameraView로부터 얼굴 데이터를 받고, InfoPanel에 전달 -->
+    <CameraView @detectedFace="updateDetectedDescriptor" />
+    <InfoPanel :storedPersons="storedPersons" :detectedDescriptor="detectedDescriptor" @updateStoredPersons="updateStoredPersons" />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
+import { ref } from 'vue';
 import CameraView from '@/components/CameraView.vue';
-import ControlPanel from '@/components/ControlPanel.vue';
+import InfoPanel from '@/components/InfoPanel.vue';
 
-// 홈 화면 레이아웃 스타일 정의
-const homeStyle = computed(() => ({
+// 저장된 인물 목록과 감지된 디스크립터
+const storedPersons = ref<{ id: string; name: string; descriptor: Float32Array }[]>([]);
+const detectedDescriptor = ref(null);
+
+// CameraView에서 전달된 얼굴 인식 결과를 업데이트하는 함수
+const updateDetectedDescriptor = (newDescriptor) => {
+  detectedDescriptor.value = newDescriptor;
+};
+
+// InfoPanel에서 저장된 인물 목록을 업데이트하는 함수
+const updateStoredPersons = (newPersons) => {
+  storedPersons.value = newPersons;
+};
+
+// 홈 레이아웃 스타일 정의 (flexbox로 배치)
+const homeStyle = {
   display: 'flex',
   width: '100%',
-  height: '100vh', // 전체 화면 높이 설정
-  boxSizing: 'border-box', // 패딩 포함한 크기 계산
-  overflow: 'hidden',      // 스크롤을 없앰
-}));
+  height: '100vh',
+  boxSizing: 'border-box',
+};
 </script>
 
 <style scoped>
-/* 자식 요소가 부모 요소보다 커지지 않도록 설정 */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-/* 자식 요소가 부모 크기보다 커지지 않도록 설정 */
-div[style*="display: flex"] > * {
-  flex-shrink: 1; /* 자식 요소 축소 */
-  max-width: 100%; /* 부모의 100% 너비를 넘지 않도록 설정 */
-  max-height: 100%; /* 부모 높이를 넘지 않도록 설정 */
-}
-
-/* 기본적으로 body와 html에 적용하여 스크롤을 없앰 */
-html, body {
-  width: 100%;
-  height: 100%;
-  overflow: hidden; /* 기본 스크롤 제거 */
-}
+/* 추가적인 스타일 정의 가능 */
 </style>
